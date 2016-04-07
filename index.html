@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pagination based on API</title>
+    <link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,600,300' rel='stylesheet' type='text/css'>
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.js"></script>
+    <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-1.3.1.js"></script>
+    <script src="app.js"></script>
+     
+</head>
+
+<body ng-app="sampleapp">
+
+    <div class="container" ng-controller="samplecontoller" ng-init="showData()">
+        <div class="row">
+            <div class="col-md-12 text-center header">
+                <h1>Where your money goes</h1>
+                <p>Payments made by Chichester District Council to individual suppliers with a value over £500 made within October.</p>
+                <hr>
+            </div>
+        </div>
+        <div class="row search">
+            <div class="col-md-12 text-center">
+                <form class="form-inline" role="form">
+                    <div class="form-item">
+                        <input type="text" class="form-control search-input" placeholder="Search suppliers" ng-model="search.name">
+                    </div>
+                    <div class="form-item">
+                        <select class="form-control" ng-model="search.rating">
+                            <option value="">Select pound rating</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                        <div class="form-item">
+                            <input class="btn btn-reset" type="button" ng-click="showData('page=0&rating=0&query='); resetForm();" value="Reset" />
+                        </div>
+                        <div class="form-item">
+                            <input class="btn btn-primary" type="button" ng-click="showData('page=0&rating=' + search.rating + '&query=' + search.name)" value="Search" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-striped table-hover text-center">
+                    <thead>
+                        <tr>
+                            <th>Supplier</th>
+                            <th class="text-center">Pound Rating</th>
+                            <th class="text-center">Reference</th>
+                            <th class="text-center">Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in items" ng-click="open(item)">
+                            <td>{{ item.payment_supplier}}</td>
+                            <td>
+                                <div class="rating" ng-init="x = item.payment_cost_rating">
+                                    <uib-rating ng-model="x" max="5" read-only="true" state-on="'blue-pound'" state-off="'white-pound'" aria-labelledby="custom-icons-1"></uib-rating>
+                                </div>
+                            </td>
+                            <td>{{ item.payment_ref }}</td>
+                            <td>{{ item.payment_amount | currency:"£":2 }}</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <footer class="text-center">
+            <ul class="pagination">
+                <li>
+                    <span type="button" class="btn" ng-repeat="(key, value) in linki" ng-show="$first" ng-disabled="left != true">
+            <a class="btn-sm" ng-click="showData(value)" ng-class="left == true ? 'np-active' : ''">
+                &lt;
+            </a>
+        </span>
+                </li>
+                <li ng-repeat="n in nums">
+                    <span ng-repeat="(key, value) in linki" ng-show="key == n">
+            <!--k- {{key}}-{{value}}-->
+            <a class="btn-sm" ng-click="showData(value)" ng-class="current == key ? 'btn-active' : ''">
+                <span ng-bind="n + 1" style="font-weight:bold;">{{key}}</span>
+                    </a>
+                    </span>
+                </li>
+                <li>
+                    <span type="button" class="btn" ng-repeat="(key, value) in linki" ng-show="$last" ng-disabled="right != true">
+            <a class="btn-sm" ng-click="showData(value)" ng-class="right == true ? 'np-active' : ''">
+                &gt;
+            </a>
+        </span>
+                </li>
+            </ul>
+        </footer>
+    </div>
+    <!-- /container -->
+
+    <script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header text-center">
+            <h3 class="modal-title">{{ item.payment_supplier }}</h3>
+        </div>
+        <div class="modal-body text-center">
+            <div class="rating" ng-init="x = item.payment_cost_rating">
+                <uib-rating ng-model="x" max="5" read-only="true" state-on="'blue-pound'" state-off="'white-pound'" aria-labelledby="custom-icons-1"></uib-rating>
+            </div>
+        </div>
+        <div class="modal-body">
+            <table class="table text-center table-modal">
+                <tbody>
+                    <tr>
+                        <td>REFERENCE</td>
+                        <td>{{ item.payment_ref }}</td>
+                    </tr>
+                    <tr>
+                        <td>VALUE</td>
+                        <td>{{ item.payment_amount | currency:"£":2 }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+        </div>
+    </script>
+
+</body>
+
+</html>
