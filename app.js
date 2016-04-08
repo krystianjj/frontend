@@ -1,5 +1,5 @@
 var myapp = angular.module('sampleapp', [ 'ngAnimate', 'ui.bootstrap' ]);
-myapp.controller('samplecontoller', function ($scope, $http, $uibModal) {
+myapp.controller('samplecontoller', function ($scope, $http) {
 // GET DATA FROM API
 $scope.showData = function( $parametr ){
     $http.get("http://test-api.kuria.tshdev.io/?" + $parametr ).success(function(response) {  
